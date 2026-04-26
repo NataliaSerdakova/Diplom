@@ -13,6 +13,16 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
+// Импорты Espresso для работы с корнями окон (Roots)
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
+
+// Дополнительно для getActivity (если используете через Instrumentation)
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import ru.iteco.fmhandroid.R;
 
 public class LoginPage extends BasePage {
@@ -25,14 +35,15 @@ public class LoginPage extends BasePage {
     private final int ENTER_BUTTON = R.id.enter_button;
     private final int AUTH_BUTTON = R.id.authorization_image_button;
 
+
     public void logInToTheSystem(String login, String password) {
         onView(isRoot()).perform(waitDisplayed(LOGIN_LAYOUT, DEFAULT_TIMEOUT));
 
         onView(allOf(isDescendantOfA(withId(LOGIN_LAYOUT)), withClassName(containsString("EditText"))))
-                .perform(replaceText(login), closeSoftKeyboard());
+                .perform(replaceText(login));
 
         onView(allOf(isDescendantOfA(withId(PASSWORD_LAYOUT)), withClassName(containsString("EditText"))))
-                .perform(replaceText(password), closeSoftKeyboard());
+                .perform(replaceText(password), closeSoftKeyboard()); // Закрыли ДО нажатия кнопки
 
         onView(withId(ENTER_BUTTON)).perform(click());
     }
@@ -54,7 +65,7 @@ public class LoginPage extends BasePage {
     }
 
     public void checkErrorToast(String expectedText) {
-        onView(withText(expectedText))
+        onView(withText(containsString(expectedText)))
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
     }

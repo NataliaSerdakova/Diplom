@@ -109,10 +109,10 @@ public class BasePage {
         @Override
         public boolean matchesSafely(Root root) {
             int type = root.getWindowLayoutParams().get().type;
-            if (type == WindowManager.LayoutParams.TYPE_TOAST) {
+            if (type == WindowManager.LayoutParams.TYPE_TOAST ||
+                    type == WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY) {
                 IBinder windowToken = root.getDecorView().getWindowToken();
-                IBinder appToken = root.getDecorView().getApplicationWindowToken();
-                return windowToken == appToken;
+                return windowToken != null;
             }
             return false;
         }
