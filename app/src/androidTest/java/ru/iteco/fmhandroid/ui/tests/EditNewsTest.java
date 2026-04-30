@@ -1,29 +1,19 @@
 package ru.iteco.fmhandroid.ui.tests;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.containsString;
-
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiScrollable;
-import androidx.test.uiautomator.UiSelector;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
 import ru.iteco.fmhandroid.ui.data.DataHelper;
-import ru.iteco.fmhandroid.ui.pages.BasePage;
 import ru.iteco.fmhandroid.ui.pages.CalendarPage;
 import ru.iteco.fmhandroid.ui.pages.ControlPanelPage;
 import ru.iteco.fmhandroid.ui.pages.LoginPage;
@@ -33,7 +23,10 @@ import ru.iteco.fmhandroid.ui.pages.NewsSectionPage;
 import ru.iteco.fmhandroid.ui.pages.TimePage;
 
 @RunWith(AndroidJUnit4.class)
-public class EditNewsTest {
+@Epic("Раздел Новости")
+@Feature("Редактирование новостей")
+@DisplayName("Тестирование формы редактирования новостей")
+public class EditNewsTest extends BaseTest {
 
     @Rule
     public ActivityScenarioRule<AppActivity> activityScenarioRule =
@@ -58,14 +51,16 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование всех полей новости")
+    @Description("Изменение категории, заголовка, даты, времени и описания с последующим сохранением")
     public void editingAllNewsFields_54() {
-        controlPanelPage.clickEditNews(0);
-        newsEditorPage.checkEditFormLoaded();
         String category = DataHelper.getRandomCategory();
         String newTitle = DataHelper.generateTitle();
         String newDate = DataHelper.getDate(1);
         String newTime = DataHelper.getCurrentTime();
         String newDescription = "Auto-Description: " + DataHelper.getRandomString(20);
+        controlPanelPage.clickEditNews(0);
+        newsEditorPage.checkEditFormLoaded();
         newsEditorPage.selectCategory(category);
         newsEditorPage.enterTitle(newTitle);
         newsEditorPage.enterDate(newDate);
@@ -79,10 +74,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование только поля Категория")
+    @Description("Смена категории новости и проверка сохранения изменений")
     public void editingTheCategoryField_55() {
+        String newCategory = DataHelper.getRandomCategory();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
-        String newCategory = DataHelper.getRandomCategory();
         newsEditorPage.selectCategory(newCategory);
         newsEditorPage.clickSave();
         controlPanelPage.checkControlPanelLoaded();
@@ -92,6 +89,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Ввод недопустимой категории")
+    @Description("Попытка сохранить новость с категорией, введенной вручную")
     public void anotherValueInTheCategoryField_56() {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
@@ -101,11 +100,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование заголовка")
+    @Description("Изменение текста заголовка и проверка его отображения в списке")
     public void editingTheTitleField_57() {
-
+        String newTitle = DataHelper.generateTitle();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
-        String newTitle = DataHelper.generateTitle();
         newsEditorPage.enterTitle(newTitle);
         newsEditorPage.clickSave();
         controlPanelPage.checkControlPanelLoaded();
@@ -113,6 +113,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Удаление заголовка")
+    @Description("Очистка поля заголовка и проверка ошибки валидации")
     public void missingTitle_58() {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
@@ -124,11 +126,13 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Заголовок из одного символа")
+    @Description("Граничное значение: сохранение новости с заголовком 'A'")
     public void OneCharacterInTitleField_60() {
-        controlPanelPage.clickEditNews(0);
-        newsEditorPage.checkEditFormLoaded();
         String singleCharTitle = "A";
         String uniqueDescription = DataHelper.getRandomString(15);
+        controlPanelPage.clickEditNews(0);
+        newsEditorPage.checkEditFormLoaded();
         newsEditorPage.enterTitle(singleCharTitle);
         newsEditorPage.enterDescription(uniqueDescription);
         newsEditorPage.clickSave();
@@ -139,6 +143,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование даты через календарь")
+    @Description("Выбор будущей даты в календаре и сохранение")
     public void editingThePublicationDateField_62() throws Exception {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.openCalendar();
@@ -147,35 +153,41 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Выбор вчерашней даты при редактировании")
+    @Description("Проверка, что дата не меняется на вчерашнюю через календарь")
     public void lastDateInTheEdit_63() throws Exception {
+        String today = DataHelper.getDate(0);
+        String initialDate = newsEditorPage.getDateText();
+        String yesterday = DataHelper.getYesterdayDay();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
-        String today = DataHelper.getDate(0);
         newsEditorPage.enterDate(today);
-        String initialDate = newsEditorPage.getDateText();
         newsEditorPage.openCalendar();
-        String yesterday = DataHelper.getYesterdayDay();
         calendarPage.selectDay(yesterday);
         calendarPage.clickOk();
         newsEditorPage.checkDateText(initialDate);
     }
 
     @Test
+    @DisplayName("Отмена выбора даты")
+    @Description("Проверка сохранения исходной даты при отмене выбора в календаре")
     public void cancelingTheDateSelection_64() throws Exception {
-        controlPanelPage.clickEditNews(0);
         String initialDate = newsEditorPage.getDateText();
+        controlPanelPage.clickEditNews(0);
         newsEditorPage.openCalendar();
         calendarPage.cancelDate(LocalDate.now().plusDays(2));
         newsEditorPage.checkDateText(initialDate);
     }
 
     @Test
+    @DisplayName("Редактирование времени через селектор")
+    @Description("Установка нового времени через графический интерфейс и проверка сохранения")
     public void editingTheTimeField_65() throws Exception {
-        controlPanelPage.clickEditNews(0);
-        newsEditorPage.checkEditFormLoaded();
         String hour = DataHelper.getRandomHour();
         String minute = DataHelper.getRandomMinuteForPicker();
         String expectedTime = DataHelper.formatTime(hour, minute);
+        controlPanelPage.clickEditNews(0);
+        newsEditorPage.checkEditFormLoaded();
         newsEditorPage.selectTimeFromPicker(hour, minute);
         newsEditorPage.checkTimeText(expectedTime);
         newsEditorPage.clickSave();
@@ -186,10 +198,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена выбора времени")
+    @Description("Проверка сохранения исходного времени при нажатии кнопки Cancel в селекторе")
     public void cancelingTheTimeSelection_66() throws Exception {
+        String initialTime = newsEditorPage.getTimeText();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
-        String initialTime = newsEditorPage.getTimeText();
         newsEditorPage.openTimePicker();
         timePage.selectTime("10", "45");
         timePage.clickCancel();
@@ -197,6 +211,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование времени через клавиатуру")
+    @Description("Ввод времени цифрами и проверка его корректного отображения в поле")
     public void editingTheTimeFieldViaTheKeyboard_67() throws Exception {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
@@ -212,10 +228,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена ввода времени через клавиатуру")
+    @Description("Проверка, что ручной ввод времени сбрасывается при отмене")
     public void cancelingTheTimeSelectionViaTheKeyboard_68() throws Exception {
+        String initialTime = newsEditorPage.getTimeText();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
-        String initialTime = newsEditorPage.getTimeText();
         newsEditorPage.openTimePicker();
         timePage.switchToKeyboardMode();
         timePage.typeTime("23", "55");
@@ -224,6 +242,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Пустое поле часов")
+    @Description("Валидация при частичном заполнении времени в режиме клавиатуры")
     public void emptyClockField_70() throws Exception {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
@@ -236,6 +256,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Граничное значение времени (24 часа)")
+    @Description("Проверка появления ошибки при вводе недопустимого часа (24)")
     public void boundaryValueInClockField_72() throws Exception {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
@@ -248,6 +270,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Переключение режимов ввода времени")
+    @Description("Проверка перехода между режимами 'Клавиатура' и 'Часы' в окне выбора времени")
     public void switchingTheTimeInputMethod_75() throws Exception {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditFormLoaded();
@@ -258,10 +282,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Редактирование поля Описание")
+    @Description("Изменение текста описания и проверка его отображения после сохранения")
     public void editingTheDescriptionField_76 () {
+        String newDescription = "Unique Desc " + DataHelper.getRandomString(10);
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
-        String newDescription = "Unique Desc " + DataHelper.getRandomString(10);
         newsEditorPage.enterDescription(newDescription);
         newsEditorPage.clickSave();
         controlPanelPage.checkControlPanelLoaded();
@@ -271,6 +297,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Удаление описания")
+    @Description("Очистка поля описания и проверка появления ошибки валидации")
     public void missingDescription_77() {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
@@ -282,11 +310,13 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Описание из одного символа")
+    @Description("Граничное значение: сохранение новости с описанием из одного символа 'Р'")
     public void OneCharacterInDescriptionField_79() {
-        controlPanelPage.clickEditNews(0);
-        newsEditorPage.checkEditNewsFormIsLoaded();
         String uniqueTitle = DataHelper.generateTitle();
         String singleCharDesc = "Р";
+        controlPanelPage.clickEditNews(0);
+        newsEditorPage.checkEditNewsFormIsLoaded();
         newsEditorPage.enterTitle(uniqueTitle);
         newsEditorPage.enterDescription(singleCharDesc);
         newsEditorPage.clickSave();
@@ -297,6 +327,8 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Смена статуса на Active")
+    @Description("Переключение статуса новости в положение 'Активна' и проверка в списке")
     public void changingTheNewsStatusToActive_81() {
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
@@ -313,10 +345,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Смена статуса на Not Active")
+    @Description("Переключение статуса новости в положение 'Не активна'")
     public void changingTheNewsStatusToNotActive_82() {
+        String newCategory = DataHelper.getRandomCategory();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
-        String newCategory = DataHelper.getRandomCategory();
         newsEditorPage.selectCategory(newCategory);
         newsEditorPage.clickCancel();
         newsEditorPage.checkCancelDialogText();
@@ -325,10 +359,12 @@ public class EditNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена редактирования новости")
+    @Description("Изменение категории и отмена через диалоговое окно подтверждения")
     public void cancelEditingNews_83() {
+        String newCategory = DataHelper.getRandomCategory();
         controlPanelPage.clickEditNews(0);
         newsEditorPage.checkEditNewsFormIsLoaded();
-        String newCategory = DataHelper.getRandomCategory();
         newsEditorPage.selectCategory(newCategory);
         newsEditorPage.clickCancel();
         newsEditorPage.checkCancelDialogText();

@@ -13,16 +13,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-
-// Импорты Espresso для работы с корнями окон (Roots)
-import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
-
-// Дополнительно для getActivity (если используете через Instrumentation)
-import androidx.test.platform.app.InstrumentationRegistry;
-
+import io.qameta.allure.Allure;
 import ru.iteco.fmhandroid.R;
 
 public class LoginPage extends BasePage {
@@ -37,34 +28,39 @@ public class LoginPage extends BasePage {
 
 
     public void logInToTheSystem(String login, String password) {
+        Allure.step("Вход в систему с логином: " + login);
         onView(isRoot()).perform(waitDisplayed(LOGIN_LAYOUT, DEFAULT_TIMEOUT));
-
+        Allure.step("Ввод логина");
         onView(allOf(isDescendantOfA(withId(LOGIN_LAYOUT)), withClassName(containsString("EditText"))))
                 .perform(replaceText(login));
-
+        Allure.step("Ввод пароля");
         onView(allOf(isDescendantOfA(withId(PASSWORD_LAYOUT)), withClassName(containsString("EditText"))))
                 .perform(replaceText(password), closeSoftKeyboard()); // Закрыли ДО нажатия кнопки
-
+        Allure.step("Нажатие кнопки входа");
         onView(withId(ENTER_BUTTON)).perform(click());
     }
 
     public void logout() {
+        Allure.step("Выход из системы");
         onView(isRoot()).perform(waitDisplayed(AUTH_BUTTON, DEFAULT_TIMEOUT));
         onView(withId(AUTH_BUTTON)).perform(click());
         onView(allOf(withId(android.R.id.title), withText("Log out"))).perform(click());
     }
 
     public void verifyTextIsVisible(String text) {
+        Allure.step("Проверка видимости текста: " + text);
         onView(isRoot()).perform(waitTextDisplayed(text, DEFAULT_TIMEOUT));
         onView(withText(text)).check(matches(isDisplayed()));
     }
 
     public void verifyLoginPageIsDisplayed() {
+        Allure.step("Проверка, что отображается страница логина");
         onView(isRoot()).perform(waitDisplayed(ENTER_BUTTON, DEFAULT_TIMEOUT));
         onView(withId(ENTER_BUTTON)).check(matches(isDisplayed()));
     }
 
     public void checkErrorToast(String expectedText) {
+        Allure.step("Проверка появления всплывающего сообщения об ошибке: " + expectedText);
         onView(withText(containsString(expectedText)))
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
@@ -80,6 +76,7 @@ public class LoginPage extends BasePage {
     }
 
     public void ensureLoggedIn(String login, String password) {
+        Allure.step("Гарантированная авторизация");
         if (!isLoggedIn()) {
             logInToTheSystem(login, password);
         }

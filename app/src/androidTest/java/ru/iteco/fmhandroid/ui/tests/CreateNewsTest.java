@@ -8,6 +8,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.time.LocalDate;
+
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
 import ru.iteco.fmhandroid.ui.data.DataHelper;
 import ru.iteco.fmhandroid.ui.pages.CalendarPage;
@@ -20,7 +25,10 @@ import ru.iteco.fmhandroid.ui.pages.TimePage;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class CreateNewsTest {
+@Epic("Раздел Новости")
+@Feature("Создание новостей")
+@DisplayName("Тестирование формы создания новостей")
+public class CreateNewsTest extends BaseTest {
 
     @Rule
     public ActivityScenarioRule<AppActivity> activityScenarioRule =
@@ -44,13 +52,15 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Успешное создание новости")
+    @Description("Заполнение всех полей валидными данными и проверка появления новости в списке")
     public void newsCreation_98() throws Exception {
-        controlPanelPage.clickAddNews();
-        newsEditorPage.checkAddNewsFormIsLoaded();
         String title = DataHelper.generateTitle();
         LocalDate targetDate = LocalDate.now().plusDays(1);
         String hour = DataHelper.getRandomHour();
         String minute = DataHelper.getRandomMinuteForPicker();
+        controlPanelPage.clickAddNews();
+        newsEditorPage.checkAddNewsFormIsLoaded();
         newsEditorPage.selectCategory(DataHelper.getRandomCategory());
         newsEditorPage.enterTitle(title);
         newsEditorPage.selectDateFromCalendar(targetDate);
@@ -63,6 +73,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена создания новости")
+    @Description("Заполнение категории и отмена создания через диалоговое окно")
     public void cancelingNewsCreation_99() {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -74,6 +86,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Создание новости с пустыми полями")
+    @Description("Проверка появления ошибок валидации при попытке сохранить пустую форму")
     public void creatingNewsItemWithCategoryOnly_100() {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -90,6 +104,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Ввод произвольной категории")
+    @Description("Проверка ошибки при вводе категории, которой нет в списке")
     public void anotherValueInTheCategoryField_101() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -103,18 +119,22 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Выбор прошедшей даты")
+    @Description("Проверка, что при выборе вчерашнего дня в календаре устанавливается текущая дата")
     public void lastDateInTheCreation_109() throws Exception {
+        String yesterday = DataHelper.getYesterdayDay();
+        String today = DataHelper.getDate(0);
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
         newsEditorPage.openCalendar();
-        String yesterday = DataHelper.getYesterdayDay();
         calendarPage.selectDay(yesterday);
         calendarPage.clickOk();
-        String today = DataHelper.getDate(0);
         newsEditorPage.checkDateText(today);
     }
 
     @Test
+    @DisplayName("Отмена выбора даты в календаре")
+    @Description("Проверка, что дата не устанавливается, если в календаре нажата кнопка Cancel")
     public void cancelingTheDateSelection_110() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -124,6 +144,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена выбора времени")
+    @Description("Проверка, что время не устанавливается, если в селекторе нажата кнопка Cancel")
     public void cancelingTheTimeSelection_113() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -134,6 +156,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Ввод времени через клавиатуру")
+    @Description("Проверка корректности установки времени при ручном вводе через режим клавиатуры")
     public void creatingTheTimeFieldViaTheKeyboard_114() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -145,6 +169,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Отмена ввода времени через клавиатуру")
+    @Description("Проверка, что введенное вручную время не сохраняется при нажатии Cancel")
     public void cancelingTheTimeSelectionViaTheKeyboard_115() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -156,6 +182,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Пустые поля времени в режиме клавиатуры")
+    @Description("Проверка валидации: нельзя подтвердить пустые поля ввода часов и минут")
     public void emptyTimeFields_116() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -168,6 +196,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Граничное значение часов (24:15)")
+    @Description("Проверка ошибки валидации при вводе недопустимого часа (24)")
     public void boundaryValueInClockField_119() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();
@@ -180,6 +210,8 @@ public class CreateNewsTest {
     }
 
     @Test
+    @DisplayName("Переключение режимов ввода времени")
+    @Description("Проверка работы кнопок переключения между режимом 'Циферблат' и 'Клавиатура'")
     public void switchingTheTimeInputMethod_122() throws Exception {
         controlPanelPage.clickAddNews();
         newsEditorPage.checkAddNewsFormIsLoaded();

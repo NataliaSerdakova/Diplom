@@ -6,24 +6,21 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import android.os.IBinder;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.util.HumanReadables;
 import androidx.test.espresso.util.TreeIterables;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
 import java.util.concurrent.TimeoutException;
+import io.qameta.allure.Allure;
 
 public class BasePage {
 
@@ -44,6 +41,7 @@ public class BasePage {
 
             @Override
             public void perform(final UiController uiController, final View view) {
+                Allure.step("Ожидание появления ID: " + viewId);
                 uiController.loopMainThreadUntilIdle();
                 final long endTime = System.currentTimeMillis() + millis;
                 final Matcher<View> matchId = withId(viewId);

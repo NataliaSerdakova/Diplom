@@ -9,6 +9,7 @@ import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.containsString;
 import ru.iteco.fmhandroid.R;
+import io.qameta.allure.Allure;
 
 public class NewsFilterPage extends BasePage {
     private final int filterTitleId = R.id.filter_news_title_text_view;
@@ -19,6 +20,7 @@ public class NewsFilterPage extends BasePage {
     private final int cancelBtnId = R.id.cancel_button;
 
     public void checkFilterFormIsLoaded() {
+        Allure.step("Проверка: форма фильтрации новостей загружена");
         onView(isRoot()).perform(waitDisplayed(filterTitleId, SHORT_TIMEOUT));
         onView(withId(filterTitleId)).check(matches(withText("Filter news")));
         onView(withId(categoryFieldId)).check(matches(isDisplayed()));
@@ -29,48 +31,58 @@ public class NewsFilterPage extends BasePage {
     }
 
     public void selectCategory(String category) {
+        Allure.step("Выбрать категорию из списка: " + category);
         onView(withId(categoryFieldId)).perform(click());
         onView(isRoot()).perform(closeSoftKeyboard());
         onView(withText(category)).inRoot(isPlatformPopup()).perform(click());
     }
 
     public void enterStartDate(String date) {
+        Allure.step("Ввести дату начала периода: " + date);
         onView(withId(dateStartId)).perform(replaceText(date), closeSoftKeyboard());
         onView(withId(dateStartId)).check(matches(withText(date)));
     }
 
     public void enterEndDate(String date) {
+        Allure.step("Ввести дату окончания периода: " + date);
         onView(withId(dateEndId)).perform(replaceText(date), closeSoftKeyboard());
         onView(withId(dateEndId)).check(matches(withText(date)));
     }
 
     public void clickFilterSubmit() {
+        Allure.step("Нажать кнопку 'Filter' (применить фильтр)");
         onView(withId(filterActionBtnId)).perform(click());
     }
 
     public void clickCancel() {
+        Allure.step("Нажать кнопку 'Cancel' (отмена фильтрации)");
         onView(withId(cancelBtnId)).perform(click());
     }
 
     public void checkWrongPeriodError() {
+        Allure.step("Проверка появления ошибки 'Wrong period'");
         onView(withText("Wrong period")).check(matches(isDisplayed()));
         onView(withId(android.R.id.button1)).perform(click());
     }
 
     public void openStartDateCalendar() {
+        Allure.step("Открыть календарь для выбора даты начала");
         onView(isRoot()).perform(waitDisplayed(dateStartId, SHORT_TIMEOUT));
         onView(withId(dateStartId)).perform(click());
     }
 
     public void checkStartDateFieldIsEmpty() {
+        Allure.step("Проверка: поле даты начала пустое");
         onView(withId(dateStartId)).check(matches(withText("")));
     }
 
     public void checkStartDateFieldHasText(String expectedText) {
+        Allure.step("Проверка: поле даты содержит текст: " + expectedText);
         onView(withId(dateStartId)).check(matches(withText(containsString(expectedText))));
     }
 
     public void enterCustomCategory(String text) {
+        Allure.step("Ввести произвольную категорию: " + text);
         onView(withId(categoryFieldId)).perform(replaceText(text), closeSoftKeyboard());
     }
 }

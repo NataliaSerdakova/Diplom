@@ -7,8 +7,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import ru.iteco.fmhandroid.R;
+import io.qameta.allure.Allure;
 
 public class NavigationPage extends BasePage {
     private final int mainMenuBtnId = R.id.main_menu_image_button;
@@ -27,28 +27,34 @@ public class NavigationPage extends BasePage {
     private final int quotesListId = R.id.our_mission_item_list_recycler_view;
 
     public void openNavigationMenu() {
+        Allure.step("Открыть главное навигационное меню");
         onView(isRoot()).perform(waitDisplayed(mainMenuBtnId, SHORT_TIMEOUT));
         onView(withId(mainMenuBtnId)).perform(click());
     }
 
     public void clickNews() {
+        Allure.step("Выбрать в меню раздел 'News'");
         onView(withText(menuNewsText)).perform(click());
     }
 
     public void clickAbout() {
+        Allure.step("Выбрать в меню раздел 'About'");
         onView(withText(menuAboutText)).perform(click());
     }
 
     public void clickMain() {
+        Allure.step("Выбрать в меню раздел 'Main'");
         onView(withText(menuMainText)).perform(click());
     }
 
     public void checkIsNewsPage() {
+        Allure.step("Проверка: экран раздела News отображается");
         onView(isRoot()).perform(waitDisplayed(newsContainerId, SHORT_TIMEOUT));
         onView(withId(newsContainerId)).check(matches(isDisplayed()));
     }
 
     public void checkIsAboutPage() {
+        Allure.step("Проверка: экран раздела About отображается");
         onView(isRoot()).perform(waitDisplayed(aboutVersionId, SHORT_TIMEOUT));
         onView(withId(aboutVersionId)).check(matches(isDisplayed()));
         onView(withId(aboutPrivacyPolicyId)).check(matches(isDisplayed()));
@@ -56,6 +62,7 @@ public class NavigationPage extends BasePage {
     }
 
     public void checkMenuElementsDisplayed() {
+        Allure.step("Проверка отображения элементов меню (Main, News, About)");
         onView(isRoot()).perform(waitTextDisplayed(menuNewsText, SHORT_TIMEOUT));
         onView(withText(menuMainText)).check(matches(isDisplayed()));
         onView(withText(menuNewsText)).check(matches(isDisplayed()));
@@ -63,27 +70,32 @@ public class NavigationPage extends BasePage {
     }
 
     public void clickBack() {
+        Allure.step("Нажать кнопку 'Назад' на экране About");
         onView(isRoot()).perform(waitDisplayed(aboutBackBtnId, SHORT_TIMEOUT));
         onView(withId(aboutBackBtnId)).perform(click());
     }
 
     public void checkIsMainPage() {
+        Allure.step("Проверка: экран раздела Main отображается");
         onView(isRoot()).perform(waitDisplayed(newsListOnMainId, SHORT_TIMEOUT));
         onView(withId(newsListOnMainId)).check(matches(isDisplayed()));
         onView(withId(allNewsLinkId)).check(matches(isDisplayed()));
     }
 
     public void clickButterfly() {
+        Allure.step("Нажать на иконку бабочки (Тематические цитаты)");
         onView(isRoot()).perform(waitDisplayed(butterflyBtnId, SHORT_TIMEOUT));
         onView(withId(butterflyBtnId)).perform(click());
     }
 
     public void checkIsQuotesPage() {
+        Allure.step("Проверка: экран тематических цитат отображается");
         onView(isRoot()).perform(waitDisplayed(quotesTitleId, SHORT_TIMEOUT));
         onView(withId(quotesListId)).check(matches(isDisplayed()));
     }
 
     public void clickAllNewsLink() {
+        Allure.step("Нажать на ссылку 'All News' на главном экране");
         onView(isRoot()).perform(waitDisplayed(allNewsLinkId, SHORT_TIMEOUT));
         onView(withId(allNewsLinkId)).perform(click());
     }

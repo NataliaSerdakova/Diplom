@@ -24,6 +24,7 @@ import androidx.test.espresso.ViewAction;
 import org.hamcrest.Matcher;
 import java.time.LocalDate;
 import ru.iteco.fmhandroid.R;
+import io.qameta.allure.Allure;
 
 public class NewsEditorPage extends BasePage {
 
@@ -44,6 +45,7 @@ public class NewsEditorPage extends BasePage {
 
 
     public void checkAddNewsFormIsLoaded() {
+        Allure.step("Проверка: форма создания новости загружена");
         onView(isRoot()).perform(waitDisplayed(titleFieldId, SHORT_TIMEOUT));
         onView(withText("Creating")).check(matches(isDisplayed()));
         onView(withId(categoryFieldId)).check(matches(isDisplayed()));
@@ -57,6 +59,7 @@ public class NewsEditorPage extends BasePage {
     }
 
     public void checkEditNewsFormIsLoaded() {
+        Allure.step("Проверка: форма редактирования новости загружена");
         onView(isRoot()).perform(waitDisplayed(titleFieldId, SHORT_TIMEOUT));
         onView(withText("Editing")).check(matches(isDisplayed()));
         onView(withId(categoryFieldId)).check(matches(isDisplayed()));
@@ -70,10 +73,12 @@ public class NewsEditorPage extends BasePage {
     }
 
     public void checkEditFormLoaded() {
+        Allure.step("Проверка: экран редактирования новости загружен");
         onView(isRoot()).perform(waitDisplayed(titleFieldId, SHORT_TIMEOUT));
     }
 
     public void selectCategory(String category) {
+        Allure.step("Выбор категории: " + category);
         onView(withId(categoryFieldId)).perform(replaceText(""));
         onView(withId(categoryFieldId)).perform(click(), closeSoftKeyboard());
         onView(withText(category))
@@ -82,134 +87,138 @@ public class NewsEditorPage extends BasePage {
     }
 
     public void enterTitle(String title) {
+        Allure.step("Ввод заголовка: " + title);
         onView(withId(titleFieldId)).perform(replaceText(title), closeSoftKeyboard());
     }
 
     public void enterDate(String date) {
+        Allure.step("Ввод даты публикации: " + date);
         onView(withId(dateFieldId)).perform(replaceText(date), closeSoftKeyboard());
     }
 
     public void enterTime(String time) {
+        Allure.step("Ввод времени публикации: " + time);
         onView(withId(timeFieldId)).perform(replaceText(time), closeSoftKeyboard());
     }
 
     public void enterDescription(String description) {
+        Allure.step("Ввод описания новости");
         onView(withId(descriptionFieldId)).perform(scrollTo(), replaceText(description), closeSoftKeyboard());
     }
 
     public void checkActiveSwitcherStatus() {
+        Allure.step("Проверка: переключатель 'Active' включен");
         onView(withId(switcherId)).check(matches(isChecked()));
     }
 
     public void clickSave() {
+        Allure.step("Нажать кнопку 'Save'");
         onView(withId(saveBtnId)).perform(click());
     }
 
     public void openTimePicker() {
+        Allure.step("Открыть окно выбора времени кликом по полю");
         onView(withId(timeFieldId)).perform(click());
     }
 
-    public String getCategoryText() {
-        return getTextFromView(withId(categoryFieldId), 0);
-    }
-
-    public String getTitleText() {
-        return getTextFromView(withId(titleFieldId), 0);
-    }
-
     public String getDateText() {
+        Allure.step("Считать текст из поля даты");
         return getTextFromView(withId(dateFieldId), 0);
     }
 
     public String getTimeText() {
+        Allure.step("Считать текст из поля времени");
         return getTextFromView(withId(timeFieldId), 0);
     }
 
     public void checkCategoryText(String expectedText) {
+        Allure.step("Проверка: в поле категории отображается текст: " + expectedText);
         onView(withId(categoryFieldId)).check(matches(withText(expectedText)));
     }
 
-    public void checkTitleText(String expectedText) {
-        onView(withId(titleFieldId)).check(matches(withText(expectedText)));
-    }
-
     public void checkDateText(String date) {
+        Allure.step("Проверка: в поле даты отображается: " + date);
         onView(withId(dateFieldId)).check(matches(withText(date)));
     }
-
-    public void checkNewsDate(String date) {
-        onView(withText(date)).check(matches(isDisplayed()));
-    }
-
     public void checkTimeText(String expectedTime) {
+        Allure.step("Проверка: в поле времени отображается: " + expectedTime);
         onView(withId(timeFieldId)).check(matches(withText(expectedTime)));
     }
 
     public void checkSaveButtonIsDisplayed() {
+        Allure.step("Проверка видимости кнопки сохранения");
         onView(withId(saveBtnId)).check(matches(isDisplayed()));
     }
 
     public void checkEmptyFieldsToast() {
+        Allure.step("Проверка появления ошибки 'Fill empty fields'");
         onView(withText(EMPTY_FIELDS_ERROR))
                 .inRoot(new ToastMatcher())
                 .check(matches(isDisplayed()));
     }
 
     public void checkTitleFieldEmptyError() {
+        Allure.step("Проверка индикации ошибки в поле заголовка");
         onView(withId(titleInputLayoutId))
                 .perform(scrollTo())
                 .check(matches(hasDescendant(withId(com.google.android.material.R.id.text_input_end_icon))));
     }
 
     public void checkDescriptionFieldEmptyError() {
+        Allure.step("Проверка индикации ошибки в поле описания");
         onView(withId(descriptionLayoutId))
                 .perform(scrollTo())
                 .check(matches(hasDescendant(withId(com.google.android.material.R.id.text_input_end_icon))));
     }
 
     public void selectDateFromCalendar(LocalDate date) throws Exception {
+        Allure.step("Выбор даты через календарь: " + date.toString());
         calendarPage.openCalendarForField(dateFieldId);
         calendarPage.setDate(date);
     }
 
     public void selectTimeFromPicker(String hours, String minutes) throws Exception {
+        Allure.step("Выбор времени через селектор: " + hours + ":" + minutes);
         onView(withId(timeFieldId)).perform(click());
         timePage.selectTime(hours, minutes);
         timePage.clickOk();
     }
 
     public void clickCancel() {
+        Allure.step("Нажать кнопку 'Cancel'");
         onView(withId(cancelBtnId)).perform(scrollTo(), click());
     }
 
     public void checkCancelDialogText() {
+        Allure.step("Проверка текста в диалоге отмены изменений");
         String dialogText = "The changes won't be saved, do you really want to log out?";
         onView(withText(dialogText)).check(matches(isDisplayed()));
     }
 
     public void confirmCancelDialog() {
+        Allure.step("Подтверждение отмены изменений в диалоге");
         onView(withId(android.R.id.button1)).perform(click());
     }
 
-    public void checkDateIsNotYesterday(String yesterday) {
-        onView(withId(dateFieldId)).check(matches(not(withText(containsString(yesterday)))));
-    }
-
     public void enterCustomCategory(String text) {
+        Allure.step("Ввести произвольную категорию вручную: " + text);
         onView(withId(categoryFieldId)).perform(replaceText(text), closeSoftKeyboard());
     }
 
     public void checkSavingFailedToast() {
+        Allure.step("Проверка появления сообщения о сбое сохранения");
         onView(withText("Saving failed. Try again later."))
                 .inRoot(new BasePage.ToastMatcher())
                 .check(matches(isDisplayed()));
     }
 
     public void openCalendar() {
+        Allure.step("Открыть календарь кликом по полю даты");
         onView(withId(dateFieldId)).perform(click());
     }
 
     public void toggleActiveStatus(boolean shouldBeActive) {
+        Allure.step("Установка переключателя 'Active' в состояние: " + shouldBeActive);
         onView(withId(switcherId)).perform(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {

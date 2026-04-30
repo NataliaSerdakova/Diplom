@@ -7,9 +7,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import java.time.LocalDate;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
 import ru.iteco.fmhandroid.ui.data.DataHelper;
 import ru.iteco.fmhandroid.ui.pages.CalendarPage;
@@ -21,7 +24,10 @@ import ru.iteco.fmhandroid.ui.pages.NewsSectionPage;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class ControlPanelFilterTest {
+@Epic("Раздел Новости")
+@Feature("Фильтрация в панели управления")
+@DisplayName("Тестирование расширенного фильтра новостей (Control Panel)")
+public class ControlPanelFilterTest extends BaseTest {
 
     @Rule
     public ActivityScenarioRule<AppActivity> activityScenarioRule =
@@ -45,11 +51,13 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по всем полям")
+    @Description("Установка категории, дат и проверка состояний чекбоксов")
     public void filteringNewsByAllFieldsInNews_84() {
-        filterPage.checkFilterFormIsLoaded();
         String category = DataHelper.getRandomCategory();
         String startDate = DataHelper.getDate(-1);
         String endDate = DataHelper.getDate(0);
+        filterPage.checkFilterFormIsLoaded();
         filterPage.selectCategory(category);
         filterPage.enterStartDate(startDate);
         filterPage.enterEndDate(endDate);
@@ -61,6 +69,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Отмена фильтрации")
+    @Description("Заполнение данных и нажатие кнопки отмены")
     public void cancelingNewsFilteringByAllFieldsInNews_85() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.selectCategory(DataHelper.getRandomCategory());
@@ -71,6 +81,8 @@ public class ControlPanelFilterTest {
 
 
     @Test
+    @DisplayName("Фильтрация по категории")
+    @Description("Выбор случайной категории из списка")
     public void filteringNewsByCategoryInNews_86() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.selectCategory(DataHelper.getRandomCategory());
@@ -80,6 +92,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по кастомной категории")
+    @Description("Ручной ввод категории 'Заявление'")
     public void filteringNewsByAnotherCategoryInNews_87() {
         filterPage.enterCustomCategory("Заявление");
         filterPage.clickFilterSubmit();
@@ -88,6 +102,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по валидному периоду")
+    @Description("Установка интервала дат за последнюю неделю")
     public void filteringNewsByValidPeriodInNews_88() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.enterStartDate(DataHelper.getDate(-7));
@@ -98,6 +114,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Ошибка при отсутствии даты окончания")
+    @Description("Проверка валидации: нельзя применить фильтр только с одной датой")
     public void filteringNewsByTheBeginningOfThePeriodInNews_89() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.enterStartDate(DataHelper.getDate(0));
@@ -106,10 +124,12 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по инвертированному периоду")
+    @Description("Дата начала позже даты окончания - ожидается пустой список")
     public void filteringNewsByInvalidPeriodInNews_91() {
-        filterPage.checkFilterFormIsLoaded();
         String startDate = "06.03.2026";
         String endDate = "01.03.2026";
+        filterPage.checkFilterFormIsLoaded();
         filterPage.enterStartDate(startDate);
         filterPage.enterEndDate(endDate);
         filterPage.clickFilterSubmit();
@@ -118,15 +138,19 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Выбор даты через календарь")
+    @Description("Проверка выбора даты в системном календаре и отображения текста в поле")
     public void choiceStartDateSelectionInCalendar_92() throws Exception {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
         filterPage.checkFilterFormIsLoaded();
         filterPage.openStartDateCalendar();
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
         calendarPage.setDate(tomorrow);
         filterPage.checkStartDateFieldHasText(String.valueOf(tomorrow.getDayOfMonth()));
     }
 
     @Test
+    @DisplayName("Отмена выбора даты в календаре")
+    @Description("Проверка, что поле остается пустым после отмены в календаре")
     public void cancelStartDateSelectionInCalendar_93() throws Exception {
         filterPage.checkFilterFormIsLoaded();
         filterPage.openStartDateCalendar();
@@ -135,6 +159,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по статусу: ACTIVE")
+    @Description("Снятие чекбокса Not Active и проверка результата")
     public void checkboxFilteringIsActive_96() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.clickNotActiveCheckbox();
@@ -145,6 +171,8 @@ public class ControlPanelFilterTest {
     }
 
     @Test
+    @DisplayName("Фильтрация по статусу: NOT ACTIVE")
+    @Description("Снятие чекбокса Active и проверка результата")
     public void checkboxFilteringIsNotActive_97() {
         filterPage.checkFilterFormIsLoaded();
         filterPage.clickActiveCheckbox();
