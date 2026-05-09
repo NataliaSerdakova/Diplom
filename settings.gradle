@@ -6,5 +6,16 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    // Эта строка заставляет проект брать репозитории только отсюда
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal() // Обязательно для Allure
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 rootProject.name = "FMHAndroid"
 include ':app'

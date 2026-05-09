@@ -1,32 +1,28 @@
 package ru.iteco.fmhandroid.ui.tests;
 
-import io.qameta.allure.Allure;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.rules.RuleChain;
 import android.graphics.Bitmap;
-import androidx.test.runner.screenshot.Screenshot;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import io.qameta.allure.android.rules.ScreenshotRule;
 
+import android.graphics.Bitmap;
+
+@HiltAndroidTest
 public class BaseTest {
 
-    @Rule
-    public TestWatcher screenshotRule = new TestWatcher() {
-        @Override
-        protected void failed(Throwable e, Description description) {
-            captureScreenshot(description.getMethodName());
-        }
+    // 1. Правило Hilt - инициализирует зависимости
+    public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
-        private void captureScreenshot(String name) {
-            try {
-                Bitmap bitmap = Screenshot.capture().getBitmap();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                Allure.addAttachment(name, "image/png", new ByteArrayInputStream(outputStream.toByteArray()), "png");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    // 2. Правило скриншотов - сработает только при падении
+    public ScreenshotRule screenshotRule = new ScreenshotRule(ScreenshotRule.Mode.FAILURE, "failure_screenshots");
+
+    // 3. Цепочка правил: строго задаем порядок
+    // Сначала отрабатывает outerRule (Hilt), затем всё, что внутри (скриншоты)
+    @Rule
+    public RuleChain chain = RuleChain
+            .outerRule(hiltRule)
+            .around(screenshotRule);
 }

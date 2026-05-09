@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.junit4.DisplayName;
@@ -28,6 +30,7 @@ public class LoginTest extends BaseTest {
 
     @Before
     public void setUp() {
+        hiltRule.inject();
         if (loginPage.isLoggedIn()) {
             loginPage.logout();
         }

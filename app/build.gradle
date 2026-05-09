@@ -1,15 +1,19 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.firebase.crashlytics'
+    id 'io.qameta.allure'
 }
 
 android {
     namespace 'ru.iteco.fmhandroid'
-    compileSdkVersion 34
+    compileSdk 34
+
 
     defaultConfig {
         applicationId "ru.iteco.fmhandroid"
@@ -17,18 +21,18 @@ android {
         targetSdkVersion 34
         versionCode 14
         versionName "1.0.0"
+        testInstrumentationRunner "ru.iteco.fmhandroid.ui.CustomTestRunner"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments clearPackageData: 'true', useTestStorageService: 'true'
     }
 
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
     buildFeatures {
@@ -36,58 +40,87 @@ android {
         buildConfig true
     }
 
+    testOptions {
+        animationsDisabled true
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += 'META-INF/LICENSE'
+            excludes += 'META-INF/LICENSE.txt'
+            excludes += 'META-INF/NOTICE'
+            excludes += 'META-INF/NOTICE.txt'
+            excludes += 'META-INF/ASL2.0'
+            excludes += 'META-INF/*.kotlin_module'
+        }
+    }
+
+
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", '"https://netoservices.ru"'
+            buildConfigField "String", "BASE_URL", '"https://students.netoservices.ru/qamid-diplom-backend/"'
         }
         debug {
-            buildConfigField "String", "BASE_URL", '"https://netoservices.ru"'
+            enableAndroidTestCoverage true
+            buildConfigField "String", "BASE_URL", '"https://students.netoservices.ru/qamid-diplom-backend/"'
+        }
+    }
+}
+
+allure {
+    version = "2.15.0"
+    adapter {
+        aspectjVersion = "1.9.7"
+        frameworks {
+            junit4 {
+                enabled = true
+           }
         }
     }
 }
 
 dependencies {
-    // Основные зависимости оставляем как были (они корректны)
+    def retrofit_version = "2.9.0"
+    def hilt_version = '2.48'
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     implementation "com.google.android.material:material:1.5.0"
     implementation "androidx.constraintlayout:constraintlayout:2.1.3"
-
-    implementation "androidx.room:room-runtime:2.6.1"
-    kapt "androidx.room:room-compiler:2.6.1"
-    implementation "androidx.room:room-ktx:2.6.1"
-
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "androidx.room:room-runtime:2.4.2"
+    kapt "androidx.room:room-compiler:2.4.2"
+    implementation "androidx.room:room-ktx:2.4.2"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.2"
-
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
     implementation "androidx.fragment:fragment-ktx:1.4.1"
-
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
-
-    implementation "androidx.navigation:navigation-fragment-ktx:2.7.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.7.0"
-
-    implementation "com.google.dagger:hilt-android:2.48"
-    kapt "com.google.dagger:hilt-compiler:2.48"
-
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    implementation "androidx.navigation:navigation-fragment-ktx:2.5.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.5.0"
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
     androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation 'androidx.test:runner:1.5.0'
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.5.1"
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:2.2.0"
 
-    androidTestImplementation "io.qameta.allure:allure-java-commons:2.21.0"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
-    androidTestImplementation "io.qameta.allure:allure-junit4:2.21.0"
+    androidTestImplementation 'io.qameta.allure:allure-kotlin-android:2.15.0'
+    androidTestImplementation 'io.qameta.allure:allure-kotlin-junit4:2.15.0'
 
-    androidTestImplementation "org.aspectj:aspectjrt:1.9.7"
+    androidTestUtil 'androidx.test:orchestrator:1.4.2'
 }

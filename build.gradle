@@ -1,15 +1,17 @@
 buildscript {
     ext.kotlin_version = "1.9.0"
     ext.hilt_version = "2.48"
-    ext.nav_version = "2.7.0"
+    ext.nav_version = "2.7.7"
 
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
     }
+
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
@@ -18,11 +20,8 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+plugins {
+    id "io.qameta.allure" version "2.11.2" apply false
 }
 
 task clean(type: Delete) {
