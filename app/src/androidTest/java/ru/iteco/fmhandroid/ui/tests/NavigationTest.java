@@ -2,10 +2,11 @@ package ru.iteco.fmhandroid.ui.tests;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import dagger.hilt.android.testing.HiltAndroidTest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -15,15 +16,20 @@ import ru.iteco.fmhandroid.ui.pages.LoginPage;
 import ru.iteco.fmhandroid.ui.pages.NavigationPage;
 import ru.iteco.fmhandroid.ui.pages.NewsSectionPage;
 
+@LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4.class)
 @Epic("Навигация")
 @Feature("Переходы между разделами")
 @DisplayName("Тесты навигации по приложению")
+
 public class NavigationTest extends BaseTest {
 
-    @Rule
-    public ActivityScenarioRule<AppActivity> activityScenarioRule =
+    public ActivityScenarioRule<AppActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(AppActivity.class);
+    {
+        chain = chain.around(mActivityScenarioRule);
+    }
 
     private final NavigationPage navigationPage = new NavigationPage();
     private final LoginPage loginPage = new LoginPage();

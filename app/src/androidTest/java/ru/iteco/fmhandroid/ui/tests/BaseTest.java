@@ -1,28 +1,49 @@
 package ru.iteco.fmhandroid.ui.tests;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import android.graphics.Bitmap;
 import dagger.hilt.android.testing.HiltAndroidRule;
-import dagger.hilt.android.testing.HiltAndroidTest;
 import org.junit.Rule;
 import org.junit.rules.RuleChain;
-import android.graphics.Bitmap;
-import io.qameta.allure.android.rules.ScreenshotRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import androidx.test.platform.app.InstrumentationRegistry;
+import io.qameta.allure.Allure;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-import android.graphics.Bitmap;
+public abstract class BaseTest {
 
-@HiltAndroidTest
-public class BaseTest {
-
-    // 1. Правило Hilt - инициализирует зависимости
     public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
-    // 2. Правило скриншотов - сработает только при падении
-    public ScreenshotRule screenshotRule = new ScreenshotRule(ScreenshotRule.Mode.FAILURE, "failure_screenshots");
+    private final TestWatcher screenshotWatcher = new TestWatcher() {
+        @Override
+        protected void failed(Throwable e, Description description) {
+            captureScreenshot(description.getMethodName());
+        }
+    };
 
-    // 3. Цепочка правил: строго задаем порядок
-    // Сначала отрабатывает outerRule (Hilt), затем всё, что внутри (скриншоты)
     @Rule
     public RuleChain chain = RuleChain
             .outerRule(hiltRule)
-            .around(screenshotRule);
+            .around(screenshotWatcher);
+
+    private void captureScreenshot(String methodName) {
+        try {
+            Bitmap screenshotBitmap = InstrumentationRegistry.getInstrumentation()
+                    .getUiAutomation()
+                    .takeScreenshot();
+
+            if (screenshotBitmap != null) {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                screenshotBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                byte[] screenshotBytes = outputStream.toByteArray();
+                Allure.addAttachment("Скриншот при падении в: " + methodName,
+                        "image/png",
+                        new ByteArrayInputStream(screenshotBytes),
+                        ".png");
+            }
+        } catch (Exception e) {
+            System.err.println("Не удалось сделать скриншот: " + e.getMessage());
+        }
+    }
 }

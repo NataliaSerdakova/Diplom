@@ -3,6 +3,7 @@ package ru.iteco.fmhandroid.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -114,7 +115,7 @@ class NewsViewModel @Inject constructor(
     }
 
     fun initializationListNewsCategories(listNewsCategories: List<News.Category>) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             newsRepository.saveNewsCategories(listNewsCategories)
         }
     }

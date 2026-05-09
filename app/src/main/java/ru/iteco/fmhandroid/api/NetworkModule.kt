@@ -1,14 +1,16 @@
 package ru.iteco.fmhandroid.api
 
+
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.iteco.fmhandroid.BuildConfig
+
 import ru.iteco.fmhandroid.api.qualifier.Authorized
 import ru.iteco.fmhandroid.api.qualifier.NonAuthorized
 import ru.iteco.fmhandroid.api.qualifier.Refresh
@@ -22,17 +24,23 @@ object NetworkModule {
     @Provides
     fun loggingInterceptor() = HttpLoggingInterceptor()
         .apply {
-            if (BuildConfig.DEBUG) {
+            if (true) {
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
+
+    private val connectionSpecs = listOf(
+        ConnectionSpec.MODERN_TLS,
+        ConnectionSpec.COMPATIBLE_TLS,
+        ConnectionSpec.CLEARTEXT
+    )
 
     @NonAuthorized
     @Provides
     fun provideNonAuthorizedRetrofit(@NonAuthorized client: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://students.netoservices.ru/qamid-diplom-backend/")
             .client(client)
             .build()
 
@@ -40,7 +48,7 @@ object NetworkModule {
     @Provides
     fun provideAuthorizedRetrofit(@Authorized client: OkHttpClient): Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BuildConfig.BASE_URL)
+        .baseUrl("https://students.netoservices.ru/qamid-diplom-backend/")
         .client(client)
         .build()
 
@@ -57,6 +65,7 @@ object NetworkModule {
             .addInterceptor(interceptor)
             .addInterceptor(authInterceptor)
             .authenticator(refreshAuthenticator)
+            .connectionSpecs(connectionSpecs)
             .build()
     }
 
@@ -65,6 +74,7 @@ object NetworkModule {
     fun nonAuthorizedOkhttp(interceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(interceptor)
+            .connectionSpecs(connectionSpecs)
             .build()
     }
 
@@ -75,6 +85,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(refreshInterceptor)
             .addInterceptor(interceptor)
+            .connectionSpecs(connectionSpecs)
             .build()
     }
 
@@ -82,7 +93,7 @@ object NetworkModule {
     @Provides
     fun provideRefreshRetrofit(@Refresh client: OkHttpClient): Retrofit =
         Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://students.netoservices.ru/qamid-diplom-backend/")
             .client(client)
             .build()
 }

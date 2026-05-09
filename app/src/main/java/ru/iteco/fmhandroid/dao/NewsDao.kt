@@ -31,19 +31,19 @@ interface NewsDao {
 
     @Transaction
     @Query("SELECT * FROM NewsEntity")
-    suspend fun getAllNewsList(): List<NewsWithCategory>
+    fun getAllNewsList(): List<NewsWithCategory>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(newsItem: NewsEntity)
+    fun insert(newsItem: NewsEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(news: List<NewsEntity>)
+    fun insert(news: List<NewsEntity>)
 
     @Query("DELETE FROM NewsEntity WHERE id = :id")
-    suspend fun removeNewsItemById(id: Int)
+    fun removeNewsItemById(id: Int)
 
     @Query("DELETE FROM NewsEntity WHERE id IN (:idList)")
-    suspend fun removeNewsItemsByIdList(idList: List<Int?>)
+    fun removeNewsItemsByIdList(idList: List<Int?>)
 }
 
 @Dao
@@ -52,10 +52,10 @@ interface NewsCategoryDao {
     fun getAllNewsCategories(): Flow<List<NewsCategoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(categories: List<NewsCategoryEntity>)
+    fun insert(categories: List<NewsCategoryEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(category: NewsCategoryEntity)
+    fun insert(category: NewsCategoryEntity)
 
     @Query("SELECT * FROM NewsCategoryEntity")
     fun getNewsCategoryList(): List<NewsCategoryEntity>

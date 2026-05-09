@@ -4,11 +4,10 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
+import dagger.hilt.android.testing.HiltAndroidTest;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.junit4.DisplayName;
@@ -16,15 +15,18 @@ import ru.iteco.fmhandroid.ui.AppActivity;
 import ru.iteco.fmhandroid.ui.pages.LoginPage;
 
 @LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4.class)
 @Epic("Авторизация")
 @DisplayName("Тесты формы входа в систему")
 
 public class LoginTest extends BaseTest {
 
-    @Rule
     public ActivityScenarioRule<AppActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(AppActivity.class);
+    {
+        chain = chain.around(mActivityScenarioRule);
+    }
 
     private final LoginPage loginPage = new LoginPage();
 
